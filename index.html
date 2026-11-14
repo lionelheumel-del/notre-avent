@@ -2,491 +2,526 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notre Avent à deux ♥</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notre Avent à deux ♥</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      padding: 18px 15px 45px;
-      background: #f7efe9;
-      color: #874452;
-      font-family: Georgia, "Times New Roman", serif;
-      text-align: center;
-    }
+:root {
+  --green: #123d32;
+  --green-light: #205343;
+  --red: #9e3445;
+  --gold: #d8b66c;
+  --cream: #fff8eb;
+}
 
-    .container {
-      width: 100%;
-      max-width: 850px;
-      margin: 0 auto;
-    }
+body {
+  margin: 0;
+  padding: 25px 15px 55px;
+  background:
+    radial-gradient(ellipse at top, #28604b 0%, #123d32 55%, #09291f 100%);
+  color: var(--cream);
+  font-family: Georgia, serif;
+  text-align: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-    .hero {
-      width: 100%;
-      max-width: 480px;
-      height: 230px;
-      object-fit: cover;
-      object-position: center;
-      border-radius: 20px;
-      box-shadow: 0 12px 30px rgba(80, 45, 45, 0.12);
-    }
+.container {
+  max-width: 850px;
+  margin: auto;
+  position: relative;
+  z-index: 2;
+}
 
-    h1 {
-      margin: 17px 0 12px;
-      font-size: clamp(34px, 6vw, 50px);
-      font-weight: normal;
-      color: #884653;
-    }
+.garland {
+  font-size: 28px;
+  letter-spacing: 9px;
+  margin: 0 auto 25px;
+  color: var(--gold);
+  text-shadow: 0 0 12px #ffcf65;
+  animation: glow 2s infinite alternate;
+}
 
-    .intro {
-      color: #a16e72;
-      font-size: 17px;
-      font-style: italic;
-      line-height: 1.7;
-      margin: 0 auto 28px;
-    }
+@keyframes glow {
+  from { text-shadow: 0 0 5px #ffcf65; }
+  to { text-shadow: 0 0 20px #ffe4a2, 0 0 30px #ffcf65; }
+}
 
-    .opening {
-      margin: 28px 0 24px;
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #a16e72;
-    }
+.hero {
+  width: 100%;
+  max-width: 470px;
+  height: 250px;
+  object-fit: cover;
+  border: 4px solid var(--gold);
+  border-radius: 18px;
+  box-shadow: 0 0 30px rgba(218,182,108,.3);
+}
 
-    .calendar {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-      max-width: 680px;
-      margin: 0 auto;
-    }
+h1 {
+  margin: 22px 0 10px;
+  color: #f5d99a;
+  font-size: clamp(34px, 7vw, 53px);
+  font-weight: normal;
+  text-shadow: 0 3px 12px rgba(0,0,0,.3);
+}
 
-    .day {
-      min-height: 125px;
-      border: 1px solid #e6c3b2;
-      border-radius: 15px;
-      background: #eee0d9;
-      color: #a98f86;
-      font-family: Georgia, serif;
-      font-size: 25px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
-    }
+.subtitle {
+  color: #f5e8c9;
+  font-size: 19px;
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
 
-    .day:hover {
-      transform: translateY(-3px);
-      background: #f4dcd4;
-    }
+.separator {
+  color: var(--gold);
+  font-size: 23px;
+  margin: 20px 0;
+}
 
-    .day .lock {
-      font-size: 17px;
-    }
+.opening {
+  color: #f4d99a;
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 25px 0;
+}
 
-    .day:disabled {
-      cursor: not-allowed;
-      opacity: 0.65;
-    }
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 13px;
+  max-width: 690px;
+  margin: auto;
+}
 
-    .day:disabled:hover {
-      transform: none;
-    }
+.day {
+  position: relative;
+  min-height: 125px;
+  border: 2px solid var(--gold);
+  border-radius: 13px;
+  background: linear-gradient(145deg, #b84952, #812c3b);
+  color: #fff5df;
+  font-family: Georgia, serif;
+  font-size: 29px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  box-shadow: 0 5px 12px rgba(0,0,0,.25);
+  transition: transform .25s, box-shadow .25s;
+}
 
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      background: rgba(42, 24, 27, 0.78);
-      padding: 18px;
-      align-items: center;
-      justify-content: center;
-      overflow-y: auto;
-    }
+.day:nth-child(3n+2) {
+  background: linear-gradient(145deg, #d0a64f, #99702d);
+  color: #fff9e9;
+}
 
-    .modal.show {
-      display: flex;
-    }
+.day:nth-child(3n) {
+  background: linear-gradient(145deg, #28624d, #164333);
+}
 
-    .modal-content {
-      position: relative;
-      width: 100%;
-      max-width: 520px;
-      max-height: 92vh;
-      overflow-y: auto;
-      padding: 25px 24px 30px;
-      background: #fff8f2;
-      border-radius: 20px;
-      box-shadow: 0 15px 50px rgba(0,0,0,0.25);
-      animation: appear 0.25s ease;
-    }
+.day:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 0 22px rgba(244,209,135,.65);
+}
 
-    @keyframes appear {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+.day .gift {
+  font-size: 22px;
+}
 
-    .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      border: none;
-      background: transparent;
-      color: #874452;
-      font-size: 30px;
-      cursor: pointer;
-    }
+.day:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
 
-    .modal-number {
-      margin: 0 0 12px;
-      color: #b48b85;
-      font-size: 13px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
+.day:disabled:hover {
+  transform: none;
+}
 
-    .modal-content h2 {
-      margin: 5px 0 18px;
-      color: #874452;
-      font-size: 29px;
-      font-weight: normal;
-    }
+.footer {
+  color: #e8d3a8;
+  font-size: 17px;
+  font-style: italic;
+  margin-top: 35px;
+}
 
-    .modal-content img {
-      display: block;
-      width: 100%;
-      max-height: 350px;
-      object-fit: cover;
-      border-radius: 13px;
-      margin-bottom: 20px;
-    }
+.snow {
+  position: fixed;
+  top: -20px;
+  z-index: 1;
+  color: white;
+  pointer-events: none;
+  animation: fall linear infinite;
+  opacity: .8;
+}
 
-    .message {
-      color: #76545a;
-      font-size: 17px;
-      line-height: 1.75;
-      white-space: pre-line;
-    }
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(360deg);
+  }
+}
 
-    .heart {
-      margin-top: 18px;
-      color: #b45b68;
-      font-size: 24px;
-    }
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(2,18,13,.88);
+  padding: 18px;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+}
 
-    @media (max-width: 520px) {
-      .calendar {
-        gap: 8px;
-      }
+.modal.show { display: flex; }
 
-      .day {
-        min-height: 90px;
-        font-size: 21px;
-        border-radius: 12px;
-      }
+.modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 28px 23px;
+  background: linear-gradient(145deg, #fff9ec, #f1e3c9);
+  border: 4px double var(--gold);
+  border-radius: 20px;
+  color: #603d36;
+  box-shadow: 0 0 35px rgba(230,190,104,.4);
+  animation: appear .3s ease;
+}
 
-      .hero {
-        height: 190px;
-      }
+@keyframes appear {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-      .intro {
-        font-size: 15px;
-      }
+.close {
+  position: absolute;
+  top: 8px;
+  right: 13px;
+  border: none;
+  background: transparent;
+  color: #8d3944;
+  font-size: 32px;
+  cursor: pointer;
+}
 
-      .modal-content {
-        padding: 25px 18px;
-      }
-    }
-  </style>
+.modal-number {
+  color: #9d7640;
+  font-size: 12px;
+  letter-spacing: 3px;
+  margin: 8px 0 12px;
+}
+
+.modal-content h2 {
+  color: #963e4b;
+  font-size: 29px;
+  font-weight: normal;
+  margin: 8px 0 18px;
+}
+
+.modal-content img {
+  display: block;
+  width: 100%;
+  max-height: 350px;
+  object-fit: cover;
+  border: 3px solid var(--gold);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.message {
+  color: #654b43;
+  font-size: 17px;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.heart {
+  color: #a33c4d;
+  font-size: 26px;
+  margin-top: 18px;
+}
+
+@media(max-width:520px) {
+  .calendar { gap: 8px; }
+  .day { min-height: 90px; font-size: 23px; }
+  .day .gift { font-size: 18px; }
+  .hero { height: 195px; }
+  .subtitle { font-size: 16px; }
+  .modal-content { padding: 25px 17px; }
+}
+</style>
 </head>
 
 <body>
 
-  <main class="container">
+<div class="container">
 
-    <img
-      class="hero"
-      src="https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/0.jpeg"
-      alt="Nous deux"
-    >
+  <div class="garland">✦ ✧ ★ ✧ ✦ ✧ ★ ✧ ✦</div>
 
-    <h1>Notre Avent à deux ♥</h1>
+  <img class="hero"
+    src="https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/0.jpeg"
+    alt="Nous deux">
 
-    <p class="intro">
-      25 jours, 25 souvenirs, 25 petites attentions.<br>
-      Un rendez-vous rien que pour nous.<br>
-      Parce que notre histoire est mon plus beau cadeau.
-    </p>
+  <h1>Notre Avent à deux ♥</h1>
 
-    <p class="opening">
-      Le calendrier ouvrira le 1er décembre ♥
-    </p>
-
-    <section class="calendar" id="calendar"></section>
-
-  </main>
-
-  <div class="modal" id="modal" aria-hidden="true">
-    <div class="modal-content" role="dialog" aria-modal="true">
-      <button class="close" id="closeModal" aria-label="Fermer">×</button>
-      <p class="modal-number" id="modalNumber"></p>
-      <h2 id="modalTitle"></h2>
-      <img id="modalImage" src="" alt="">
-      <div class="message" id="modalMessage"></div>
-      <div class="heart">♥</div>
-    </div>
+  <div class="subtitle">
+    25 jours, 25 surprises, une seule histoire : la nôtre.<br>
+    Un peu de magie, beaucoup d'amour… et toi. ❤️
   </div>
 
-  <script>
-    // MODE TEST : true = toutes les cases sont ouvertes.
-    // Avant le 1er décembre, remplace true par false.
-    const TEST_MODE = true;
+  <div class="separator">❄ ✦ ❄</div>
 
-    const base =
-      "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/";
+  <div class="opening">Notre petit rendez-vous de Noël</div>
 
-    const surprises = [
-      {
-        photo: "0.jpeg",
-        title: "Le bonheur de t'avoir",
-        message: "Je ne sais pas si tu réalises à quel point ta présence a changé mes journées. Je sais simplement que depuis que tu es là, ma vie a une saveur particulière. Et je suis heureux que nos chemins se soient croisés."
-      },
-      {
-        photo: "1.jpg",
-        title: "Mon évidence",
-        message: "Je ne cherche pas la perfection dans une histoire d'amour. Je cherche quelque chose de vrai, de sincère et de solide. Et c'est exactement ce que j'ai envie de construire avec toi."
-      },
-      {
-        photo: "2.jpg",
-        title: "Tu peux compter sur moi",
-        message: "Je veux que tu saches une chose : tu n'as pas besoin de tout porter toute seule. Dans les bons moments comme dans les plus compliqués, je veux être celui sur qui tu peux compter."
-      },
-      {
-        photo: "3.jpeg",
-        title: "Te choisir",
-        message: "Aimer quelqu'un, ce n'est pas seulement être heureux quand tout va bien. C'est aussi choisir de rester, de comprendre, de faire des efforts et d'avancer ensemble. Et c'est ce que je veux avec toi."
-      },
-      {
-        photo: "4.jpg",
-        title: "Ta place dans ma vie",
-        message: "Tu as ta place dans ma vie, une vraie place. Pas seulement dans mes bons moments, mais aussi dans mes projets, mes envies et dans tout ce que j'imagine pour demain."
-      },
-      {
-        photo: "5.jpeg",
-        title: "En toute confiance",
-        message: "Je veux que tu puisses être pleinement toi-même avec moi. Sans avoir peur de me décevoir, sans devoir cacher tes fragilités. Je t'aime pour la personne que tu es, pas pour une version parfaite de toi."
-      },
-      {
-        photo: "6.jpg",
-        title: "Nos petits moments",
-        message: "Ce sont parfois les choses les plus simples qui me rendent le plus heureux : nos discussions, nos sourires, nos regards et ces petits instants qui n'appartiennent qu'à nous."
-      },
-      {
-        photo: "7.jpeg",
-        title: "Je suis fier de nous",
-        message: "Notre histoire est la nôtre, avec nos caractères, nos habitudes et nos différences. Et je trouve que c'est justement ce qui la rend belle. Je suis fier de ce que nous partageons."
-      },
-      {
-        photo: "8.jpg",
-        title: "Je ne joue pas avec nous",
-        message: "Mes sentiments sont sincères. Je ne suis pas là pour vivre une jolie parenthèse. J'ai envie d'une histoire qui dure, dans laquelle chacun se sent aimé, respecté et important."
-      },
-      {
-        photo: "9.jpeg",
-        title: "Ton sourire",
-        message: "Ton sourire a ce petit pouvoir de rendre mes journées plus belles. Même quand je ne te le dis pas, sache qu'il fait partie de ces petites choses qui me manquent quand tu n'es pas près de moi."
-      },
-      {
-        photo: "10.jpg",
-        title: "Avancer ensemble",
-        message: "Je ne sais pas exactement ce que demain nous réserve. Mais je sais avec qui j'ai envie de le découvrir. Avec toi, en prenant le temps, en avançant à notre rythme et en construisant quelque chose de beau."
-      },
-      {
-        photo: "11.jpeg",
-        title: "Tu es importante",
-        message: "Je veux que tu ne doutes jamais de l'importance que tu as pour moi. Tu n'es pas une option, ni une présence parmi d'autres. Tu es une femme que j'aime et que j'ai envie de préserver dans ma vie."
-      },
-      {
-        photo: "12.jpg",
-        title: "Nos différences",
-        message: "Nous ne sommes pas obligés de penser pareil sur tout. Nous avons chacun notre personnalité et notre façon de voir les choses. Ce qui compte pour moi, c'est de toujours chercher à nous comprendre."
-      },
-      {
-        photo: "13.jpg",
-        title: "Un amour qui rassure",
-        message: "Je veux être un amour qui apaise, pas qui inquiète. Une présence qui rassure, pas qui fait douter. Je veux que tu te sentes bien avec moi, libre d'aimer et libre d'être toi."
-      },
-      {
-        photo: "14.jpg",
-        title: "Encore et encore",
-        message: "Je ne veux pas seulement collectionner les beaux souvenirs avec toi. Je veux continuer à en créer. Des voyages, des découvertes, des fous rires, des moments simples et plein d'autres premières fois."
-      },
-      {
-        photo: "15.jpg",
-        title: "Je crois en nous",
-        message: "Même lorsque la vie est moins simple, je crois en notre capacité à nous retrouver, à nous écouter et à avancer. Une belle histoire ne se construit pas toute seule, elle se construit à deux."
-      },
-      {
-        photo: "16.jpg",
-        title: "Merci d'être toi",
-        message: "Merci pour ta douceur, ton caractère, ta personnalité, tes attentions et tout ce qui fait que tu es Alexandra. Je ne veux pas changer qui tu es. Je veux continuer à découvrir toutes tes facettes."
-      },
-      {
-        photo: "17.jpg",
-        title: "Une vraie équipe",
-        message: "J'aime l'idée que nous puissions être deux personnes indépendantes et en même temps une vraie équipe. Se soutenir, s'encourager, se tirer vers le haut et être heureux des réussites de l'autre."
-      },
-      {
-        photo: "18.jpg",
-        title: "Je suis là",
-        message: "Je ne te promets pas que tout sera toujours facile. Je te promets en revanche de ne pas considérer notre histoire comme acquise. Je veux continuer à prendre soin de nous et de ce lien qui nous unit."
-      },
-      {
-        photo: "19.jpg",
-        title: "Le bonheur au quotidien",
-        message: "Je n'ai pas besoin de grands événements pour être heureux avec toi. Un moment ensemble, un repas, une balade ou simplement être à tes côtés peuvent suffire à rendre une journée spéciale."
-      },
-      {
-        photo: "20.jpg",
-        title: "Mon envie de demain",
-        message: "Quand je pense à demain, j'ai envie qu'il y ait encore des projets à deux, des surprises, des envies partagées et cette complicité qui nous appartient. J'ai encore tellement de choses à vivre avec toi."
-      },
-      {
-        photo: "21.jpg",
-        title: "Tu peux être sereine",
-        message: "Je veux que mes actes soient à la hauteur de mes paroles. Que tu puisses voir dans ma façon de t'aimer que tu peux avoir confiance en moi et en ce que nous construisons."
-      },
-      {
-        photo: "22.jpg",
-        title: "Mon plus beau cadeau",
-        message: "Parmi toutes les belles choses que la vie peut nous offrir, je crois que rencontrer quelqu'un avec qui l'on se sent bien est un cadeau précieux. Et moi, ce cadeau, c'est toi."
-      },
-      {
-        photo: "23.jpg",
-        title: "Je te choisis",
-        message: "Si je devais résumer ces 24 jours en quelques mots, ce serait ceux-ci : je t'aime, je crois en nous et j'ai envie de continuer cette histoire avec toi. Pas seulement aujourd'hui, pas seulement à Noël, mais dans tous les jours qui nous attendent. Joyeux Noël mon amour. ❤️"
-      },
-      {
-        photo: "24.jpg",
-        title: "Et notre histoire continue...",
-        message: "Aujourd'hui, c'est Noël. Et j'ai envie de te dire que mon plus beau souhait n'est pas dans un paquet cadeau. C'est de continuer à vivre, rire, rêver et construire à tes côtés. Merci d'être dans ma vie. Je t'aime, et je te choisis encore pour tous les Noëls à venir. ❤️"
-      }
-    ];
+  <section class="calendar" id="calendar"></section>
 
-    const calendar = document.getElementById("calendar");
-    const modal = document.getElementById("modal");
+  <div class="footer">
+    Joyeux Avent, mon amour ♥<br>
+    <span style="font-size:13px">Avec tout mon amour, Lionel</span>
+  </div>
 
-    function parisDate() {
-      const parts = new Intl.DateTimeFormat("fr-FR", {
-        timeZone: "Europe/Paris",
-        year: "numeric",
-        month: "numeric",
-        day: "numeric"
-      }).formatToParts(new Date());
+</div>
 
-      const result = {};
-      parts.forEach(part => {
-        result[part.type] = Number(part.value);
-      });
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modal-content" role="dialog" aria-modal="true">
+    <button class="close" id="closeModal" aria-label="Fermer">×</button>
+    <div class="modal-number" id="modalNumber"></div>
+    <h2 id="modalTitle"></h2>
+    <img id="modalImage" src="" alt="">
+    <div class="message" id="modalMessage"></div>
+    <div class="heart">♥</div>
+  </div>
+</div>
 
-      return result;
-    }
+<script>
+const TEST_MODE = true;
 
-    function availableDay(day) {
-      if (TEST_MODE) return true;
+const base = "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/";
 
-      const date = parisDate();
+const surprises = [
+{
+photo:"0.jpeg",
+title:"Le bonheur de t'avoir",
+message:"Je ne sais pas si tu réalises à quel point ta présence a changé mes journées. Je sais simplement que depuis que tu es là, ma vie a une saveur particulière. Et je suis heureux que nos chemins se soient croisés."
+},
+{
+photo:"1.jpg",
+title:"Mon évidence",
+message:"Je ne cherche pas la perfection dans une histoire d'amour. Je cherche quelque chose de vrai, de sincère et de solide. Et c'est exactement ce que j'ai envie de construire avec toi."
+},
+{
+photo:"2.jpg",
+title:"Tu peux compter sur moi",
+message:"Je veux que tu saches une chose : tu n'as pas besoin de tout porter toute seule. Dans les bons moments comme dans les plus compliqués, je veux être celui sur qui tu peux compter."
+},
+{
+photo:"3.jpeg",
+title:"Te choisir",
+message:"Aimer quelqu'un, ce n'est pas seulement être heureux quand tout va bien. C'est aussi choisir de rester, de comprendre, de faire des efforts et d'avancer ensemble. Et c'est ce que je veux avec toi."
+},
+{
+photo:"4.jpg",
+title:"Ta place dans ma vie",
+message:"Tu as ta place dans ma vie, une vraie place. Pas seulement dans mes bons moments, mais aussi dans mes projets, mes envies et dans tout ce que j'imagine pour demain."
+},
+{
+photo:"5.jpeg",
+title:"En toute confiance",
+message:"Je veux que tu puisses être pleinement toi-même avec moi. Sans avoir peur de me décevoir, sans devoir cacher tes fragilités. Je t'aime pour la personne que tu es, pas pour une version parfaite de toi."
+},
+{
+photo:"6.jpg",
+title:"Nos petits moments",
+message:"Ce sont parfois les choses les plus simples qui me rendent le plus heureux : nos discussions, nos sourires, nos regards et ces petits instants qui n'appartiennent qu'à nous."
+},
+{
+photo:"7.jpeg",
+title:"Je suis fier de nous",
+message:"Notre histoire est la nôtre, avec nos caractères, nos habitudes et nos différences. Et je trouve que c'est justement ce qui la rend belle. Je suis fier de ce que nous partageons."
+},
+{
+photo:"8.jpg",
+title:"Je ne joue pas avec nous",
+message:"Mes sentiments sont sincères. Je ne suis pas là pour vivre une jolie parenthèse. J'ai envie d'une histoire qui dure, dans laquelle chacun se sent aimé, respecté et important."
+},
+{
+photo:"9.jpeg",
+title:"Ton sourire",
+message:"Ton sourire a ce petit pouvoir de rendre mes journées plus belles. Même quand je ne te le dis pas, sache qu'il fait partie de ces petites choses qui me manquent quand tu n'es pas près de moi."
+},
+{
+photo:"10.jpg",
+title:"Avancer ensemble",
+message:"Je ne sais pas exactement ce que demain nous réserve. Mais je sais avec qui j'ai envie de le découvrir. Avec toi, en prenant le temps, en avançant à notre rythme et en construisant quelque chose de beau."
+},
+{
+photo:"11.jpeg",
+title:"Tu es importante",
+message:"Je veux que tu ne doutes jamais de l'importance que tu as pour moi. Tu n'es pas une option, ni une présence parmi d'autres. Tu es une femme que j'aime et que j'ai envie de préserver dans ma vie."
+},
+{
+photo:"12.jpg",
+title:"Nos différences",
+message:"Nous ne sommes pas obligés de penser pareil sur tout. Nous avons chacun notre personnalité et notre façon de voir les choses. Ce qui compte pour moi, c'est de toujours chercher à nous comprendre."
+},
+{
+photo:"13.jpg",
+title:"Un amour qui rassure",
+message:"Je veux être un amour qui apaise, pas qui inquiète. Une présence qui rassure, pas qui fait douter. Je veux que tu te sentes bien avec moi, libre d'aimer et libre d'être toi."
+},
+{
+photo:"14.jpg",
+title:"Encore et encore",
+message:"Je ne veux pas seulement collectionner les beaux souvenirs avec toi. Je veux continuer à en créer. Des voyages, des découvertes, des fous rires, des moments simples et plein d'autres premières fois."
+},
+{
+photo:"15.jpg",
+title:"Je crois en nous",
+message:"Même lorsque la vie est moins simple, je crois en notre capacité à nous retrouver, à nous écouter et à avancer. Une belle histoire ne se construit pas toute seule, elle se construit à deux."
+},
+{
+photo:"16.jpg",
+title:"Merci d'être toi",
+message:"Merci pour ta douceur, ton caractère, ta personnalité, tes attentions et tout ce qui fait que tu es Alexandra. Je ne veux pas changer qui tu es. Je veux continuer à découvrir toutes tes facettes."
+},
+{
+photo:"17.jpg",
+title:"Une vraie équipe",
+message:"J'aime l'idée que nous puissions être deux personnes indépendantes et en même temps une vraie équipe. Se soutenir, s'encourager, se tirer vers le haut et être heureux des réussites de l'autre."
+},
+{
+photo:"18.jpg",
+title:"Je suis là",
+message:"Je ne te promets pas que tout sera toujours facile. Je te promets en revanche de ne pas considérer notre histoire comme acquise. Je veux continuer à prendre soin de nous et de ce lien qui nous unit."
+},
+{
+photo:"19.jpg",
+title:"Le bonheur au quotidien",
+message:"Je n'ai pas besoin de grands événements pour être heureux avec toi. Un moment ensemble, un repas, une balade ou simplement être à tes côtés peuvent suffire à rendre une journée spéciale."
+},
+{
+photo:"20.jpg",
+title:"Mon envie de demain",
+message:"Quand je pense à demain, j'ai envie qu'il y ait encore des projets à deux, des surprises, des envies partagées et cette complicité qui nous appartient. J'ai encore tellement de choses à vivre avec toi."
+},
+{
+photo:"21.jpg",
+title:"Tu peux être sereine",
+message:"Je veux que mes actes soient à la hauteur de mes paroles. Que tu puisses voir dans ma façon de t'aimer que tu peux avoir confiance en moi et en ce que nous construisons."
+},
+{
+photo:"22.jpg",
+title:"Mon plus beau cadeau",
+message:"Parmi toutes les belles choses que la vie peut nous offrir, je crois que rencontrer quelqu'un avec qui l'on se sent bien est un cadeau précieux. Et moi, ce cadeau, c'est toi."
+},
+{
+photo:"23.jpg",
+title:"Je te choisis",
+message:"Si je devais résumer ces 24 jours en quelques mots, ce serait ceux-ci : je t'aime, je crois en nous et j'ai envie de continuer cette histoire avec toi. Pas seulement aujourd'hui, pas seulement à Noël, mais dans tous les jours qui nous attendent. Joyeux Noël mon amour. ❤️"
+},
+{
+photo:"24.jpg",
+title:"Et notre histoire continue...",
+message:"Aujourd'hui, c'est Noël. Et j'ai envie de te dire que mon plus beau souhait n'est pas dans un paquet cadeau. C'est de continuer à vivre, rire, rêver et construire à tes côtés. Merci d'être dans ma vie. Je t'aime, et je te choisis encore pour tous les Noëls à venir. ❤️"
+}
+];
 
-      if (date.year < 2026 || date.year > 2026) return false;
-      if (date.month < 12) return false;
-      if (date.month > 12) return true;
+function parisDate() {
+  const parts = new Intl.DateTimeFormat("fr-FR", {
+    timeZone: "Europe/Paris",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric"
+  }).formatToParts(new Date());
 
-      return day <= date.day;
-    }
+  const result = {};
+  parts.forEach(part => result[part.type] = Number(part.value));
+  return result;
+}
 
-    function openSurprise(index) {
-      const surprise = surprises[index];
+function availableDay(day) {
+  if (TEST_MODE) return true;
 
-      document.getElementById("modalNumber").textContent =
-        "SURPRISE DU " + (index + 1) + " DÉCEMBRE";
+  const date = parisDate();
+  if (date.year !== 2026 || date.month < 12) return false;
+  if (date.month > 12) return true;
+  return day <= date.day;
+}
 
-      document.getElementById("modalTitle").textContent =
-        surprise.title;
+const calendar = document.getElementById("calendar");
+const modal = document.getElementById("modal");
 
-      document.getElementById("modalImage").src =
-        base + surprise.photo;
+function openSurprise(index) {
+  const item = surprises[index];
 
-      document.getElementById("modalImage").alt =
-        surprise.title;
+  document.getElementById("modalNumber").textContent =
+    "✦ SURPRISE DU " + (index + 1) + " DÉCEMBRE ✦";
 
-      document.getElementById("modalMessage").textContent =
-        surprise.message;
+  document.getElementById("modalTitle").textContent = item.title;
+  document.getElementById("modalImage").src = base + item.photo;
+  document.getElementById("modalImage").alt = item.title;
+  document.getElementById("modalMessage").textContent = item.message;
 
-      modal.classList.add("show");
-      modal.setAttribute("aria-hidden", "false");
-      document.body.style.overflow = "hidden";
-    }
+  modal.classList.add("show");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
 
-    function closeSurprise() {
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-    }
+function closeSurprise() {
+  modal.classList.remove("show");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
 
-    surprises.forEach((surprise, index) => {
-      const day = index + 1;
-      const button = document.createElement("button");
+surprises.forEach((item, index) => {
+  const day = index + 1;
+  const button = document.createElement("button");
 
-      button.className = "day";
-      button.type = "button";
-      button.innerHTML =
-        "<span>" + String(day).padStart(2, "0") + "</span>" +
-        "<span class='lock'>" +
-        (availableDay(day) ? "♥" : "🔒") +
-        "</span>";
+  button.className = "day";
+  button.type = "button";
+  button.innerHTML =
+    "<span>" + String(day).padStart(2, "0") + "</span>" +
+    "<span class='gift'>" + (availableDay(day) ? "🎁" : "🔒") + "</span>";
 
-      button.disabled = !availableDay(day);
+  button.disabled = !availableDay(day);
 
-      if (availableDay(day)) {
-        button.addEventListener("click", () => {
-          openSurprise(index);
-        });
-      }
+  if (availableDay(day)) {
+    button.addEventListener("click", () => openSurprise(index));
+  }
 
-      calendar.appendChild(button);
-    });
+  calendar.appendChild(button);
+});
 
-    document.getElementById("closeModal")
-      .addEventListener("click", closeSurprise);
+document.getElementById("closeModal").addEventListener("click", closeSurprise);
 
-    modal.addEventListener("click", event => {
-      if (event.target === modal) {
-        closeSurprise();
-      }
-    });
+modal.addEventListener("click", event => {
+  if (event.target === modal) closeSurprise();
+});
 
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape") {
-        closeSurprise();
-      }
-    });
-  </script>
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeSurprise();
+});
+
+// Petits flocons animés
+for (let i = 0; i < 28; i++) {
+  const snow = document.createElement("div");
+  snow.className = "snow";
+  snow.textContent = Math.random() > .5 ? "❄" : "·";
+  snow.style.left = Math.random() * 100 + "vw";
+  snow.style.fontSize = (10 + Math.random() * 15) + "px";
+  snow.style.animationDuration = (8 + Math.random() * 13) + "s";
+  snow.style.animationDelay = (-Math.random() * 15) + "s";
+  document.body.appendChild(snow);
+}
+</script>
 
 </body>
 </html>
