@@ -10,9 +10,11 @@
 <style>
 :root {
   --green: #123d30;
-  --green-light: #1c5944;
+  --green-light: #315b49;
   --red: #8f2638;
+  --red-dark: #741c2d;
   --gold: #d9b76e;
+  --gold-light: #f7e5b2;
   --cream: #fff8e9;
   --text: #fdf8ed;
 }
@@ -82,20 +84,22 @@ h1 {
   margin: 0 auto;
 }
 
+/* CASES DU CALENDRIER */
+
 .day {
   position: relative;
   min-width: 0;
   min-height: 100px;
   border: 2px solid var(--gold);
   border-radius: 13px;
-  background: linear-gradient(145deg, #a12e40, #741c2d);
+  background: linear-gradient(145deg, #a12e40, var(--red-dark));
   color: #fff8e9;
   font-family: Georgia, serif;
   font-size: 29px;
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 4px 0 #4f1723, 0 7px 14px rgba(0,0,0,.18);
-  transition: transform .2s, box-shadow .2s;
+  transition: transform .2s, box-shadow .2s, background .2s;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -129,6 +133,12 @@ h1 {
   line-height: 1;
 }
 
+.day-number {
+  line-height: 1;
+}
+
+/* CASES NON ENCORE DISPONIBLES */
+
 .day.locked {
   background: linear-gradient(145deg, #315b49, #1c4235);
   color: #d9cba9;
@@ -141,22 +151,29 @@ h1 {
   transform: none;
 }
 
-.day.opened {
-  background: linear-gradient(145deg, #d5b66f, #a9853f);
-  color: #3d2b12;
-  border-color: #f7e5b2;
-  box-shadow: 0 4px 0 #755a2d;
+/* CASES DISPONIBLES MAIS NON CONSULTEES */
+
+.day.available {
+  background: linear-gradient(145deg, #a12e40, #741c2d);
+  border-color: var(--gold);
+  color: #fff8e9;
 }
 
-.day-number {
-  line-height: 1;
+/* CASES DEJA CONSULTEES */
+
+.day.visited {
+  background: linear-gradient(145deg, #e5ca82, #b58d45);
+  border-color: #fff0c4;
+  color: #49351b;
+  box-shadow: 0 4px 0 #755a2d, 0 7px 14px rgba(0,0,0,.18);
 }
 
-.footer {
-  color: #e8d8b7;
-  font-size: 14px;
-  line-height: 1.6;
-  margin-top: 32px;
+.day.visited::before {
+  color: #fff7dc;
+}
+
+.day.visited .gift {
+  font-size: 21px;
 }
 
 /* FLOC­ONS ANIMÉS */
@@ -182,7 +199,14 @@ h1 {
   }
 }
 
-/* FENÊTRE DU MESSAGE */
+.footer {
+  color: #e8d8b7;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 32px;
+}
+
+/* FENÊTRE POPUP */
 
 .modal {
   display: none;
@@ -273,7 +297,7 @@ h1 {
   margin-top: 12px;
 }
 
-/* ADAPTATION TABLETTE */
+/* TABLETTES */
 
 @media (max-width: 600px) {
   .calendar {
@@ -290,7 +314,7 @@ h1 {
   }
 }
 
-/* ADAPTATION IPHONE */
+/* IPHONE */
 
 @media (max-width: 480px) {
   body {
@@ -362,7 +386,7 @@ h1 {
   }
 }
 
-/* Respecte les préférences de réduction des animations */
+/* REDUCTION DES ANIMATIONS SI DEMANDEE PAR LE TELEPHONE */
 
 @media (prefers-reduced-motion: reduce) {
   .snowflake {
@@ -415,15 +439,70 @@ h1 {
 
 <script>
 
-/* MODE TEST :
-   true  = les 25 cases sont accessibles immédiatement
-   false = les cases s'ouvrent automatiquement en décembre 2026
+/* ------------------------------------------------
+   PARAMETRES DU CALENDRIER
+------------------------------------------------ */
+
+/*
+  true  = toutes les cases sont ouvertes pour tester
+  false = ouverture progressive du 1er au 25 décembre 2026
 */
 
 const TEST_MODE = true;
 
 
-/* LES 25 PHOTOS ET LES 25 MESSAGES */
+/* ------------------------------------------------
+   ORDRE DES CASES
+------------------------------------------------ */
+
+/*
+  Les numéros ci-dessous déterminent leur position.
+  Cet ordre est fixe : il ne changera pas au rechargement.
+  Chaque numéro conserve son propre message et sa date.
+*/
+
+const displayOrder = [
+  14, 3, 21, 8, 17,
+  5, 24, 11, 1, 19,
+  7, 15, 4, 23, 10,
+  25, 2, 18, 12, 6,
+  20, 9, 16, 13, 22
+];
+
+
+/* ------------------------------------------------
+   MEMORISATION DES CASES CONSULTEES
+------------------------------------------------ */
+
+const STORAGE_KEY = "notre-avent-cases-consultees";
+
+function getVisitedDays() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveVisitedDay(day) {
+  const visited = getVisitedDays();
+
+  if (!visited.includes(day)) {
+    visited.push(day);
+  }
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(visited));
+  } catch (error) {
+    console.warn("La mémorisation locale n'est pas disponible.");
+  }
+}
+
+
+/* ------------------------------------------------
+   LES 25 PHOTOS ET LES 25 MESSAGES
+------------------------------------------------ */
 
 const surprises = [
 
@@ -432,121 +511,145 @@ const surprises = [
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/0.jpeg",
     message: "Je ne sais pas si tu réalises à quel point ta présence a changé mes journées. Je sais simplement que depuis que tu es là, ma vie a une saveur particulière. Et je suis heureux que nos chemins se soient croisés."
   },
+
   {
     title: "Mon évidence",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/1.jpg",
     message: "Je ne cherche pas la perfection dans une histoire d'amour. Je cherche quelque chose de vrai, de sincère et de solide. Et c'est exactement ce que j'ai envie de construire avec toi."
   },
+
   {
     title: "Tu peux compter sur moi",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/2.jpg",
     message: "Je veux que tu saches une chose : tu n'as pas besoin de tout porter toute seule. Dans les bons moments comme dans les plus compliqués, je veux être celui sur qui tu peux compter."
   },
+
   {
     title: "Te choisir",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/3.jpeg",
     message: "Aimer quelqu'un, ce n'est pas seulement être heureux quand tout va bien. C'est aussi choisir de rester, de comprendre, de faire des efforts et d'avancer ensemble. Et c'est ce que je veux avec toi."
   },
+
   {
     title: "Ta place dans ma vie",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/4.jpg",
     message: "Tu as ta place dans ma vie, une vraie place. Pas seulement dans mes bons moments, mais aussi dans mes projets, mes envies et dans tout ce que j'imagine pour demain."
   },
+
   {
     title: "En toute confiance",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/5.jpeg",
     message: "Je veux que tu puisses être pleinement toi-même avec moi. Sans avoir peur de me décevoir, sans devoir cacher tes fragilités. Je t'aime pour la personne que tu es, pas pour une version parfaite de toi."
   },
+
   {
     title: "Nos petits moments",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/6.jpg",
     message: "Ce sont parfois les choses les plus simples qui me rendent le plus heureux : nos discussions, nos sourires, nos regards et ces petits instants qui n'appartiennent qu'à nous."
   },
+
   {
     title: "Je suis fier de nous",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/7.jpeg",
     message: "Notre histoire est la nôtre, avec nos caractères, nos habitudes et nos différences. Et je trouve que c'est justement ce qui la rend belle. Je suis fier de ce que nous partageons."
   },
+
   {
     title: "Je ne joue pas avec nous",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/8.jpg",
     message: "Mes sentiments sont sincères. Je ne suis pas là pour vivre une jolie parenthèse. J'ai envie d'une histoire qui dure, dans laquelle chacun se sent aimé, respecté et important."
   },
+
   {
     title: "Ton sourire",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/9.jpeg",
     message: "Ton sourire a ce petit pouvoir de rendre mes journées plus belles. Même quand je ne te le dis pas, sache qu'il fait partie de ces petites choses qui me manquent quand tu n'es pas près de moi."
   },
+
   {
     title: "Avancer ensemble",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/10.jpg",
     message: "Je ne sais pas exactement ce que demain nous réserve. Mais je sais avec qui j'ai envie de le découvrir. Avec toi, en prenant le temps, en avançant à notre rythme et en construisant quelque chose de beau."
   },
+
   {
     title: "Tu es importante",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/11.jpeg",
     message: "Je veux que tu ne doutes jamais de l'importance que tu as pour moi. Tu n'es pas une option, ni une présence parmi d'autres. Tu es une femme que j'aime et que j'ai envie de préserver dans ma vie."
   },
+
   {
     title: "Nos différences",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/12.jpg",
     message: "Nous ne sommes pas obligés de penser pareil sur tout. Nous avons chacun notre personnalité et notre façon de voir les choses. Ce qui compte pour moi, c'est de toujours chercher à nous comprendre."
   },
+
   {
     title: "Un amour qui rassure",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/13.jpg",
     message: "Je veux être un amour qui apaise, pas qui inquiète. Une présence qui rassure, pas qui fait douter. Je veux que tu te sentes bien avec moi, libre d'aimer et libre d'être toi."
   },
+
   {
     title: "Encore et encore",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/14.jpg",
     message: "Je ne veux pas seulement collectionner les beaux souvenirs avec toi. Je veux continuer à en créer. Des voyages, des découvertes, des fous rires, des moments simples et plein d'autres premières fois."
   },
+
   {
     title: "Je crois en nous",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/15.jpg",
     message: "Même lorsque la vie est moins simple, je crois en notre capacité à nous retrouver, à nous écouter et à avancer. Une belle histoire ne se construit pas toute seule, elle se construit à deux."
   },
+
   {
     title: "Merci d'être toi",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/16.jpg",
     message: "Merci pour ta douceur, ton caractère, ta personnalité, tes attentions et tout ce qui fait que tu es Alexandra. Je ne veux pas changer qui tu es. Je veux continuer à découvrir toutes tes facettes."
   },
+
   {
     title: "Une vraie équipe",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/17.jpg",
     message: "J'aime l'idée que nous puissions être deux personnes indépendantes et en même temps une vraie équipe. Se soutenir, s'encourager, se tirer vers le haut et être heureux des réussites de l'autre."
   },
+
   {
     title: "Je suis là",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/18.jpg",
     message: "Je ne te promets pas que tout sera toujours facile. Je te promets en revanche de ne pas considérer notre histoire comme acquise. Je veux continuer à prendre soin de nous et de ce lien qui nous unit."
   },
+
   {
     title: "Le bonheur au quotidien",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/19.jpg",
     message: "Je n'ai pas besoin de grands événements pour être heureux avec toi. Un moment ensemble, un repas, une balade ou simplement être à tes côtés peuvent suffire à rendre une journée spéciale."
   },
+
   {
     title: "Mon envie de demain",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/20.jpg",
     message: "Quand je pense à demain, j'ai envie qu'il y ait encore des projets à deux, des surprises, des envies partagées et cette complicité qui nous appartient. J'ai encore tellement de choses à vivre avec toi."
   },
+
   {
     title: "Tu peux être sereine",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/21.jpg",
     message: "Je veux que mes actes soient à la hauteur de mes paroles. Que tu puisses voir dans ma façon de t'aimer que tu peux avoir confiance en moi et en ce que nous construisons."
   },
+
   {
     title: "Mon plus beau cadeau",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/22.jpg",
     message: "Parmi toutes les belles choses que la vie peut nous offrir, je crois que rencontrer quelqu'un avec qui l'on se sent bien est un cadeau précieux. Et moi, ce cadeau, c'est toi."
   },
+
   {
     title: "Je te choisis",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/23.jpg",
     message: "Si je devais résumer ces 24 jours en quelques mots, ce serait ceux-ci : je t'aime, je crois en nous et j'ai envie de continuer cette histoire avec toi. Pas seulement aujourd'hui, pas seulement à Noël, mais dans tous les jours qui nous attendent. Joyeux Noël mon amour. ❤️"
   },
+
   {
     title: "Et notre histoire continue...",
     image: "https://alexandraetlionel.wordpress.com/wp-content/uploads/2026/11/24.jpg",
@@ -556,75 +659,112 @@ const surprises = [
 ];
 
 
-/* GESTION DES DATES */
+/* ------------------------------------------------
+   VERIFICATION DES DATES
+------------------------------------------------ */
 
-function availableDay(day) {
-  if (TEST_MODE) return true;
-
-  const now = new Date();
-
-  const parisDate = new Intl.DateTimeFormat("en-CA", {
+function getParisDate() {
+  const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Paris",
     year: "numeric",
     month: "2-digit",
     day: "2-digit"
-  }).format(now);
+  }).formatToParts(new Date());
 
-  const [year, month, date] = parisDate.split("-").map(Number);
+  const result = {};
 
-  if (year > 2026) return true;
-  if (year < 2026) return false;
-  if (month > 12) return true;
-  if (month < 12) return false;
+  parts.forEach(part => {
+    result[part.type] = Number(part.value);
+  });
 
-  return date >= day;
+  return result;
+}
+
+function availableDay(day) {
+
+  if (TEST_MODE) return true;
+
+  const today = getParisDate();
+
+  if (today.year > 2026) return true;
+  if (today.year < 2026) return false;
+
+  if (today.month < 12) return false;
+  if (today.month > 12) return true;
+
+  return today.day >= day;
 }
 
 
-/* CRÉATION DES 25 CASES */
+/* ------------------------------------------------
+   CREATION ET AFFICHAGE DES CASES
+------------------------------------------------ */
 
 const calendar = document.getElementById("calendar");
 
-surprises.forEach((surprise, index) => {
+function renderCalendar() {
 
-  const dayNumber = index + 1;
-  const isAvailable = availableDay(dayNumber);
+  calendar.innerHTML = "";
 
-  const button = document.createElement("button");
+  const visited = getVisitedDays();
 
-  button.type = "button";
-  button.className = "day";
+  displayOrder.forEach(dayNumber => {
 
-  if (!isAvailable) {
-    button.classList.add("locked");
-  }
+    const surprise = surprises[dayNumber - 1];
+    const isAvailable = availableDay(dayNumber);
+    const isVisited = visited.includes(dayNumber);
 
-  if (!TEST_MODE && isAvailable) {
-    button.classList.add("opened");
-  }
+    const button = document.createElement("button");
 
-  button.innerHTML = `
-    <span class="day-number">${dayNumber}</span>
-    <span class="gift">${isAvailable ? "🎁" : "🔒"}</span>
-  `;
+    button.type = "button";
+    button.className = "day";
 
-  button.setAttribute(
-    "aria-label",
-    isAvailable
-      ? "Ouvrir la surprise du " + dayNumber
-      : "Surprise du " + dayNumber + " verrouillée"
-  );
+    if (!isAvailable) {
 
-  if (isAvailable) {
-    button.addEventListener("click", () => openSurprise(index));
-  }
+      button.classList.add("locked");
 
-  calendar.appendChild(button);
+    } else if (isVisited) {
 
-});
+      button.classList.add("visited");
+
+    } else {
+
+      button.classList.add("available");
+
+    }
+
+    const symbol = !isAvailable
+      ? "🔒"
+      : isVisited
+        ? "❤️"
+        : "🎁";
+
+    button.innerHTML = `
+      <span class="day-number">${dayNumber}</span>
+      <span class="gift">${symbol}</span>
+    `;
+
+    button.setAttribute(
+      "aria-label",
+      isAvailable
+        ? "Ouvrir la surprise du " + dayNumber
+        : "Surprise du " + dayNumber + " verrouillée"
+    );
+
+    if (isAvailable) {
+      button.addEventListener("click", () => openSurprise(dayNumber));
+    }
+
+    calendar.appendChild(button);
+
+  });
+
+}
 
 
-/* OUVERTURE DE LA POPUP */
+/* ------------------------------------------------
+   OUVERTURE DE LA POPUP
+------------------------------------------------ */
 
 const modal = document.getElementById("modal");
 const modalTitle = document.getElementById("modalTitle");
@@ -632,14 +772,24 @@ const modalImage = document.getElementById("modalImage");
 const modalMessage = document.getElementById("modalMessage");
 const closeButton = document.getElementById("closeModal");
 
-function openSurprise(index) {
+function openSurprise(dayNumber) {
 
-  const surprise = surprises[index];
+  if (!availableDay(dayNumber)) return;
+
+  const surprise = surprises[dayNumber - 1];
 
   modalTitle.textContent = surprise.title;
   modalImage.src = surprise.image;
   modalImage.alt = surprise.title;
   modalMessage.textContent = surprise.message;
+
+  /* On mémorise immédiatement la case consultée */
+
+  saveVisitedDay(dayNumber);
+
+  /* On actualise les couleurs des cases */
+
+  renderCalendar();
 
   modal.classList.add("active");
   document.body.style.overflow = "hidden";
@@ -648,31 +798,42 @@ function openSurprise(index) {
 }
 
 
-/* FERMETURE DE LA POPUP */
+/* ------------------------------------------------
+   FERMETURE DE LA POPUP
+------------------------------------------------ */
 
 function closeSurprise() {
+
   modal.classList.remove("active");
   document.body.style.overflow = "";
+
 }
 
 closeButton.addEventListener("click", closeSurprise);
 
 modal.addEventListener("click", (event) => {
+
   if (event.target === modal) {
     closeSurprise();
   }
+
 });
 
 document.addEventListener("keydown", (event) => {
+
   if (event.key === "Escape" && modal.classList.contains("active")) {
     closeSurprise();
   }
+
 });
 
 
-/* CRÉATION DES FLOCONS */
+/* ------------------------------------------------
+   FLOC­ONS DE NEIGE
+------------------------------------------------ */
 
 const snowSymbols = ["❄", "❅", "❆", "✧"];
+
 const snowCount = window.innerWidth <= 480 ? 14 : 22;
 
 for (let i = 0; i < snowCount; i++) {
@@ -691,7 +852,15 @@ for (let i = 0; i < snowCount; i++) {
   snow.style.animationDelay = (-Math.random() * 20) + "s";
 
   document.body.appendChild(snow);
+
 }
+
+
+/* ------------------------------------------------
+   INITIALISATION
+------------------------------------------------ */
+
+renderCalendar();
 
 </script>
 
